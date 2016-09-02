@@ -8,6 +8,7 @@ while not cap.isOpened():
 
 pos_frame = cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES)
 orig = np.zeros((360,638),np.uint8)
+ofs = np.ones((360,638),np.uint8) * 128
 while True:
     flag, frame = cap.read()
     print frame.shape
@@ -19,7 +20,7 @@ while True:
         if pos_frame == 1.0:
             print "hoge"
             orig = frame_gray;
-        cv2.imshow('video',cv2.absdiff(orig,frame_gray))
+        cv2.imshow('video',cv2.multiply(cv2.subtract(orig,frame_gray),0.5)+ofs)
         print str(pos_frame)+" frames"
     else:
         # The next frame is not ready, so we try to read it again
@@ -31,6 +32,5 @@ while True:
     if cv2.waitKey(10) == 27:
         break
     if cap.get(cv2.cv.CV_CAP_PROP_POS_FRAMES) == cap.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT):
-        # If the number of captured frames is equal to the total number of frames,
-        # we stop
-        break
+            pos_frame = 0 #Or whatever as long as it is the same as next line
+            cap.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, 0)
